@@ -13,7 +13,7 @@
 
 
 * **`packages/` (领域逻辑层)**
-* `api/`: **核心业务定义**。包含 `root.ts` (路由聚合) 和 `router/` (业务逻辑)。
+* `api/`: **核心业务定义**。包含 `root.ts` (路由聚合) 和 `router/` (业务逻辑)。业务接口必须放在此处，通过 tRPC 暴露给所有客户端，避免在 `apps/*` 追加平行的 REST 端点。
 * `db/`: 基于 **Drizzle ORM** 的数据库交互层，包含 `schema.ts`。
 * `auth/`: 基于 Auth.js 的身份验证核心。
 * `ui/`: 跨端组件库，采用原子化设计（如 `button.tsx`, `input.tsx`）。
@@ -34,6 +34,7 @@
 1. **数据库变更：** 在 `packages/db/src/schema.ts` 定义表结构。
 2. **API 暴露：** * 在 `packages/api/src/router/` 创建业务路由。
 * 在 `packages/api/src/root.ts` 中注册该路由。
+* 客户端仅通过 tRPC 客户端调用，禁止在 `apps/*` 新增独立 REST 路由承载业务。
 
 
 3. **调用端使用：** * **Nextjs:** 使用 `src/trpc/` 下的客户端或服务端调用器。

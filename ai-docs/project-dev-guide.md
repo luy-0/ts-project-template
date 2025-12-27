@@ -31,6 +31,8 @@
 
 **路径**: `packages/api/src/router/`
 
+**职责分层**: `packages/api` 负责业务契约和逻辑；`apps/*` 只负责 UI 渲染和调用 tRPC，不在 `apps/*` 新增独立的 REST 路由来承载业务。
+
 ### 3.1 创建新路由
 
 1. 在 `router/` 目录下创建 `[feature].ts`。
@@ -52,6 +54,11 @@ export const postRouter = {
 ```
 
 4. 在 `packages/api/src/root.ts` 中注册新路由。
+
+### 3.3 常见误区（避免）
+
+- **误将业务接口放在 `apps/*/api`**：这会让 Expo/TanStack Start 失去类型安全共享。正确做法是在 `packages/api` 定义 tRPC 路由（如 `pingRouter`），再由客户端通过 tRPC 调用。
+- **绕过 tRPC 直接 fetch 内部地址**：应使用 tRPC 客户端保持类型与输入输出一致。
 
 ---
 

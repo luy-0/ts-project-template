@@ -1,21 +1,21 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- `apps/nextjs`, `apps/tanstack-start`, and `apps/expo` are the entry points; run app-specific commands there when debugging.
-- Shared logic lives in `packages`: `api` (tRPC routers), `auth` (Better Auth setup), `db` (Drizzle schemas & clients), and `ui` (shared React components).
-- Tooling presets are centralized in `tooling` (eslint, prettier, tailwind, typescript) and consumed via workspace packages such as `@acme/eslint-config`.
-- Environment variables come from the root `.env` (see `.env.example`). CLI helpers like `with-env` in app scripts load it.
+- `apps/nextjs`, `apps/tanstack-start`, and `apps/expo` render UI only; do not add business endpoints here. All contracts live in `packages/api` as tRPC routers (register in `packages/api/src/root.ts`).
+- Shared logic lives in `packages`: `api`, `auth` (Better Auth), `db` (Drizzle), `ui` (shared React components). Tooling presets sit in `tooling` and are consumed via `@acme/*` configs.
+- Environment variables come from root `.env` (see `.env.example`); `with-env` in app scripts loads it.
 
 ## Build, Test, and Development Commands
 - Install with `pnpm install` (Node 22 / pnpm 10 per `package.json#engines`).
-- Start all dev processes with `pnpm dev` (Turbo watches dependencies). For a single target: `pnpm --filter @acme/nextjs dev`, `pnpm --filter @acme/tanstack-start dev`, or from `apps/expo` use `pnpm dev:ios` / `pnpm dev:android`.
-- Pre-PR checks: `pnpm lint`, `pnpm typecheck`, and `pnpm build` (runs through the Turbo graph). Format fixes with `pnpm format:fix`.
-- Database and auth: `pnpm db:push`, `pnpm db:studio`, and `pnpm auth:generate` to refresh the Better Auth schema (writes to `packages/db/src/auth-schema.ts`).
+- Start all dev processes with `pnpm dev`. Single targets: `pnpm --filter @acme/nextjs dev`, `pnpm --filter @acme/tanstack-start dev`, or in `apps/expo` run `pnpm dev:ios` / `pnpm dev:android`.
+- Pre-PR checks: `pnpm lint`, `pnpm typecheck`, `pnpm build`; format fixes with `pnpm format:fix`.
+- Database/auth helpers: `pnpm db:push`, `pnpm db:studio`, `pnpm auth:generate` (writes `packages/db/src/auth-schema.ts`).
 
 ## Coding Style & Naming Conventions
-- TypeScript-first; follow shared configs (`@acme/tsconfig`, `@acme/eslint-config`, `@acme/prettier-config`). Prettier enforces 2-space indentation and quote/style defaults—avoid manual overrides.
-- Keep packages and imports scoped under `@acme/*`. Use PascalCase for components/hooks, camelCase for functions/vars, and kebab-case for file names unless a framework requires otherwise.
+- TypeScript-first; follow `@acme/tsconfig`, `@acme/eslint-config`, `@acme/prettier-config`. Prettier enforces 2-space indentation; avoid overrides.
+- Keep packages/imports scoped under `@acme/*`. Use PascalCase for components/hooks, camelCase for functions/vars, kebab-case for files unless framework dictates otherwise.
 - Tailwind is available in web apps; prefer tokens defined in `tooling/tailwind`.
+- Add new business endpoints as tRPC procedures in `packages/api`; clients call via tRPC, not ad-hoc fetch.
 
 ## Testing Guidelines
 - There is no monorepo-wide test runner yet; add tests nearest to the code (e.g., `feature/Button.test.tsx`) using the framework that fits the target app (React Testing Library/Playwright for web, Expo Testing Library for native).
