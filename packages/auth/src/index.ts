@@ -13,8 +13,8 @@ export function initAuth<
   productionUrl: string;
   secret: string | undefined;
 
-  discordClientId: string;
-  discordClientSecret: string;
+  githubClientId: string;
+  githubClientSecret: string;
   extraPlugins?: TExtraPlugins;
 }) {
   const config = {
@@ -31,10 +31,11 @@ export function initAuth<
       ...(options.extraPlugins ?? []),
     ],
     socialProviders: {
-      discord: {
-        clientId: options.discordClientId,
-        clientSecret: options.discordClientSecret,
-        redirectURI: `${options.productionUrl}/api/auth/callback/discord`,
+      github: {
+        clientId: options.githubClientId,
+        clientSecret: options.githubClientSecret,
+        redirectURI: `${options.baseUrl}/api/auth/callback/github`,
+        scope: ["read:user", "user:email"],
       },
     },
     trustedOrigins: ["expo://"],
